@@ -90,7 +90,7 @@
   /* Days grid */
   .week-days { display: none; padding: 0 12px 12px; }
   .week-days.open { display: block; }
-  .days-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
   .day-cell { border-radius: 10px; padding: 7px 3px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; }
   .day-cell.clickable:active { transform: scale(0.94); }
   .day-name-label { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
@@ -267,40 +267,42 @@ const DAY_DETAILS = {
 };
 
 // Day layout: 6 days (Mon–Sat). Sun removed (only 1 rest day = Mon).
-// 2S·4R mode: Mon=rest, Tue=run, Wed=strength, Thu=vibes, Fri=strength, Sat=long
-// 3S·3R mode: Mon=rest, Tue=run, Wed=strength, Thu=strength, Fri=vibes+strength alt, Sat=long
-// We store base data per week; mode swaps Thu/Fri.
+// 2S·4R mode: Mon=rest, Tue=run, Wed=strength, Thu=vibes, Fri=run, Sat=long, Sun=run
+// 3S·3R mode: Mon=rest, Tue=run, Wed=strength, Thu=strength, Fri=vibes, Sat=long, Sun=strength
+// Only one rest day per week (Monday). Sunday is the optional extra run or strength session.
 
-const DAY_NAMES_6 = ['Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAY_NAMES_6 = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-// Base week template builder. long=long run km, total for 2s4r mode.
-// Each week: days array has 6 entries [Mon..Sat]
-// mode '2s4r': Mon-rest, Tue-run, Wed-strength, Thu-vibes, Fri-strength, Sat-long  (2 strength, 3 runs incl vibes)
-// mode '3s3r': Mon-rest, Tue-run, Wed-strength, Thu-strength, Fri-vibes, Sat-long  (3 strength, 2 runs + vibes)
-// For 3s3r we add an extra short run on Tue to compensate slightly (or keep same)
+// Base week template builder.
+// Each week: 7 entries [Mon..Sun], only Monday is rest.
+// 2s4r: Mon rest, Tue run, Wed strength, Thu vibes, Fri run, Sat long, Sun run (4 runs, 2 strength)
+// 3s3r: Mon rest, Tue run, Wed strength, Thu strength, Fri vibes, Sat long, Sun strength (3 runs, 3 strength)
 
 function buildDays(w, m) {
   // m = '2s4r' or '3s3r'
   const v = w.vibesKm, r1 = w.run1Km, r2 = w.run2Km;
+  const sunRunKm = Math.max(4, Math.round(r1 * 0.6));
   if (m === '2s4r') {
-    // Mon rest | Tue easy | Wed strength | Thu vibes | Fri strength | Sat long
+    // Mon rest | Tue run | Wed strength | Thu vibes | Fri run | Sat long | Sun run
     return [
-      {type:'rest',   detail:'Full rest — recharge'},
-      {type:'run',    km:r1, detail: r1 + ' km easy pace — conversational'},
-      {type:'strength',      detail:w.str1},
-      {type:'vibes',  km:v,  detail:w.vibesDetail},
-      {type:'strength',      detail:w.str2},
-      {type:'long',   km:w.long, detail:w.longDetail},
+      {type:'rest',     detail:'Full rest — recharge'},
+      {type:'run',      km:r1,      detail: r1 + ' km easy pace — conversational'},
+      {type:'strength',             detail:w.str1},
+      {type:'vibes',    km:v,       detail:w.vibesDetail},
+      {type:'run',      km:r2,      detail: r2 + ' km easy — keep it relaxed'},
+      {type:'long',     km:w.long,  detail:w.longDetail},
+      {type:'run',      km:sunRunKm, detail: sunRunKm + ' km easy — optional recovery run, go by feel'},
     ];
   } else {
-    // 3s3r: Mon rest | Tue easy | Wed strength | Thu strength | Fri vibes | Sat long
+    // 3s3r: Mon rest | Tue run | Wed strength | Thu strength | Fri vibes | Sat long | Sun strength
     return [
-      {type:'rest',   detail:'Full rest — recharge'},
-      {type:'run',    km:r1, detail: r1 + ' km easy pace — conversational'},
-      {type:'strength',      detail:w.str1},
-      {type:'strength',      detail:w.str3 || w.str2},
-      {type:'vibes',  km:v,  detail:w.vibesDetail},
-      {type:'long',   km:w.long, detail:w.longDetail},
+      {type:'rest',     detail:'Full rest — recharge'},
+      {type:'run',      km:r1,      detail: r1 + ' km easy pace — conversational'},
+      {type:'strength',             detail:w.str1},
+      {type:'strength',             detail:w.str3 || w.str2},
+      {type:'vibes',    km:v,       detail:w.vibesDetail},
+      {type:'long',     km:w.long,  detail:w.longDetail},
+      {type:'strength',             detail: w.str2 + ' — optional third session, go lighter'},
     ];
   }
 }
@@ -402,25 +404,15 @@ const weekDefs = [
 // Build week 18 days specially
 function buildWeek18Days(m) {
   // Mon rest, Tue easy 5km, Wed rest, Thu vibes 4km, Fri rest, Sat RACE
-  if (m === '2s4r') {
-    return [
-      {type:'rest',  detail:'Full rest'},
-      {type:'run',   km:5, detail:'4–5 km very easy — shake out the legs'},
-      {type:'rest',  detail:'Full rest'},
-      {type:'vibes', km:4, detail:'4 km easy + 4 strides — final vibes run'},
-      {type:'rest',  detail:'Carb load, hydrate, gear check'},
-      {type:'race',  km:42, detail:'TCS Toronto Waterfront Marathon 🏁'},
-    ];
-  } else {
-    return [
-      {type:'rest',  detail:'Full rest'},
-      {type:'run',   km:5, detail:'4–5 km very easy — shake out the legs'},
-      {type:'rest',  detail:'Full rest'},
-      {type:'vibes', km:4, detail:'4 km easy + 4 strides — final vibes run'},
-      {type:'rest',  detail:'Carb load, hydrate, gear check'},
-      {type:'race',  km:42, detail:'TCS Toronto Waterfront Marathon 🏁'},
-    ];
-  }
+  return [
+    {type:'rest',  detail:'Full rest'},
+    {type:'run',   km:5, detail:'4–5 km very easy — shake out the legs'},
+    {type:'rest',  detail:'Full rest'},
+    {type:'vibes', km:4, detail:'4 km easy + 4 strides — final vibes run'},
+    {type:'rest',  detail:'Carb load, hydrate, gear check'},
+    {type:'race',  km:42, detail:'TCS Toronto Waterfront Marathon 🏁'},
+    {type:'rest',  detail:'You just ran a marathon. Rest. Celebrate. 🎉'},
+  ];
 }
 
 const PHASE_BADGE = {base:'badge-base',build:'badge-build',peak:'badge-peak',taper:'badge-taper'};
