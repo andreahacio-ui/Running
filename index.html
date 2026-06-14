@@ -91,7 +91,7 @@
   .week-days { display: none; padding: 0 12px 12px; }
   .week-days.open { display: block; }
   .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-  .day-cell { border-radius: 10px; padding: 7px 3px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; }
+  .day-cell { border-radius: 10px; padding: 7px 3px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
   .day-cell.clickable:active { transform: scale(0.94); }
   .day-name-label { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
   .day-icon { font-size: 17px; margin-bottom: 2px; display: block; }
@@ -511,7 +511,7 @@ function renderWeeks() {
       const icon = DAY_ICONS[d.type]||'😴';
       const distVal = d.km ? fmt(d.km)+' '+unitLabel() : '';
       const kmLabel = distVal ? '<div class="day-dist">'+distVal+'</div>' : '';
-      return '<div class="day-cell '+dd.cls+' '+clickable+' '+doneClass+'" onclick="onDayTap('+w.n+','+i+')">'
+      return '<div class="day-cell '+dd.cls+' '+clickable+' '+doneClass+'" onclick="event.stopPropagation();onDayTap('+w.n+','+i+')">'
         +'<div class="day-name-label">'+DAY_NAMES_6[i]+'</div>'
         +'<span class="day-icon">'+icon+'</span>'
         +'<div class="day-type-label">'+dd.label+'</div>'
@@ -556,37 +556,46 @@ function onDayTap(weekN, dayIdx) {
   const days = getDays(w);
   const d = days[dayIdx];
   if (d.type==='rest') return;
+
+  // Tap a completed session to un-mark it instantly (no overlay)
+  if (isDone(weekN, dayIdx)) {
+    setDayState(weekN, dayIdx, null);
+    renderWeeks(); updateStats();
+    return;
+  }
+
+  // Open bottom sheet to confirm completion
   overlayTarget = {weekN, dayIdx};
   const dd = DAY_DETAILS[d.type];
-  const done = isDone(weekN, dayIdx);
-  document.getElementById('ov-title').textContent = DAY_NAMES_6[dayIdx]+' — '+dd.label;
-  document.getElementById('ov-sub').textContent = 'Week '+weekN+' · '+w.dates+(d.km?' · '+fmt(d.km)+' '+unitLabel():'');
+  document.getElementById('ov-title').textContent = DAY_NAMES_6[dayIdx] + ' - ' + dd.label;
+  document.getElementById('ov-sub').textContent = 'Week ' + weekN + ' - ' + w.dates + (d.km ? ' - ' + fmt(d.km) + ' ' + unitLabel() : '');
   document.getElementById('ov-detail').textContent = d.detail;
   const vibesEl = document.getElementById('ov-vibes');
-  if (d.type==='vibes') {
+  if (d.type === 'vibes') {
     const q = vibeQuote(weekN);
-    vibesEl.innerHTML = '<div class="vibes-label">🎵 Vibes Run Day</div>'
-      +'<div class="vibes-quote"><div class="vibes-quote-text">"'+q.quote+'"</div>'
-      +'<div class="vibes-quote-attr">— Bob Marley · '+q.song+'</div></div>';
-  } else { vibesEl.innerHTML=''; }
-  const actions = document.getElementById('ov-actions');
-  if (done) {
-    actions.innerHTML = '<button class="btn-undone" onclick="markDay(null)">Mark incomplete</button>';
+    vibesEl.innerHTML = '<div class="vibes-label">Vibes Run Day</div>'
+      + '<div class="vibes-quote"><div class="vibes-quote-text">' + q.quote + '</div>'
+      + '<div class="vibes-quote-attr">Bob Marley - ' + q.song + '</div></div>';
   } else {
-    actions.innerHTML = '<button class="btn-done" onclick="markDay(\'done\')">Mark complete ✓</button>'
-      +'<button class="btn-skip" onclick="markDay(\'skip\')">Skip</button>';
+    vibesEl.innerHTML = '';
   }
+  document.getElementById('ov-actions').innerHTML =
+    '<button class="btn-done" onclick="markDay('done')">Done &#10003;</button>'
+    + '<button class="btn-skip" onclick="markDay('skip')">Skip</button>';
   document.getElementById('overlay').classList.add('open');
 }
 
 function markDay(val) {
   if (!overlayTarget) return;
   setDayState(overlayTarget.weekN, overlayTarget.dayIdx, val);
-  closeOverlay(); renderWeeks(); updateStats();
+  closeOverlay();
+  renderWeeks();
+  updateStats();
 }
+
 function closeOverlay() {
   document.getElementById('overlay').classList.remove('open');
-  overlayTarget=null;
+  overlayTarget = null;
 }
 
 function init() {
