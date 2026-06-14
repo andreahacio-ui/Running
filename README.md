@@ -1,4 +1,0 @@
-[sw.js](https://github.com/user-attachments/files/28932148/sw.js)
-<img width="512" height="512" alt="icon-512" src="https://github.com/user-attachments/assets/d66e88a6-c69f-4785-84a7-5f583e5ba512" />[index.html](https://github.com/user-attachments/files/28932150/index.html)
-[manifest.json](https://github.com/user-attachments/files/28932149/manifest.json)
-<img width="192" height="192" alt="icon-192" src="https://github.com/user-attachments/assets/de762bdb-b598-4ddd-9e2e-709c43b39b49" />
