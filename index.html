@@ -11,120 +11,92 @@
 <link rel="apple-touch-icon" href="icons/icon-512.png">
 <title>Toronto Marathon 2026</title>
 <style>
-  :root {
-    --bg: #0f0f0f; --bg2: #1a1a1a; --bg3: #222;
-    --border: rgba(255,255,255,0.08); --text: #f0f0f0; --muted: #888;
-    --accent: #E8FF47; --accent-dim: rgba(232,255,71,0.12);
-    --blue: #4A9EFF; --blue-dim: rgba(74,158,255,0.12);
-    --orange: #FF7A3D; --orange-dim: rgba(255,122,61,0.12);
-    --green: #4ADE80; --green-dim: rgba(74,222,128,0.1);
-    --purple: #C084FC; --purple-dim: rgba(192,132,252,0.12);
-    --gray-dim: rgba(255,255,255,0.06);
-    --radius: 14px;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; overflow: hidden; }
-  #app { display: flex; flex-direction: column; height: 100%; padding-top: var(--safe-top); }
-
-  /* Header */
-  .header { padding: 14px 20px 10px; flex-shrink: 0; }
-  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .header-photo { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; border: 2px solid var(--accent); flex-shrink: 0; }
-  .header-text { display: flex; flex-direction: column; }
-  .header-title { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
-  .header-race { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
-  .header-date { font-size: 12px; color: var(--muted); margin-top: 1px; }
-  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
-  .countdown-pill { background: var(--accent); color: #0f0f0f; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 20px; white-space: nowrap; }
-
-  /* Toggles row */
-  .toggles-row { display: flex; gap: 8px; padding: 0 20px 10px; flex-shrink: 0; }
-  .toggle-group { display: flex; background: var(--bg3); border-radius: 20px; padding: 3px; border: 1px solid var(--border); }
-  .toggle-btn { padding: 4px 11px; border-radius: 16px; font-size: 11px; font-weight: 700; border: none; cursor: pointer; background: transparent; color: var(--muted); transition: all 0.18s; letter-spacing: 0.03em; white-space: nowrap; }
-  .toggle-btn.active { background: var(--text); color: var(--bg); }
-  .toggle-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; align-self: center; margin-right: 2px; }
-
-  /* Progress bar */
-  .progress-section { padding: 0 20px 10px; flex-shrink: 0; }
-  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .progress-bar-bg { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
-
-  /* Stats row */
-  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 20px 10px; flex-shrink: 0; }
-  .stat-card { background: var(--bg2); border-radius: 12px; padding: 9px 12px; }
-  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-  .stat-val { font-size: 17px; font-weight: 700; color: var(--text); }
-  .stat-sub { font-size: 10px; color: var(--muted); }
-
-  /* Phase nav */
-  .phase-nav { display: flex; gap: 6px; padding: 0 20px 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
-  .phase-nav::-webkit-scrollbar { display: none; }
-  .phase-btn { padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: transparent; color: var(--muted); white-space: nowrap; cursor: pointer; transition: all 0.15s; }
-  .phase-btn.active { background: var(--accent); color: #0f0f0f; border-color: transparent; }
-
-  /* Week list */
-  .week-list { flex: 1; overflow-y: auto; padding: 0 20px; padding-bottom: calc(20px + var(--safe-bottom)); scrollbar-width: none; }
-  .week-list::-webkit-scrollbar { display: none; }
-  .week-card { background: var(--bg2); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; border: 1px solid var(--border); }
-  .week-card.current-week { border-color: var(--accent); }
-  .week-card.completed-week { opacity: 0.6; }
-  .week-header { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; user-select: none; }
-  .week-num-badge { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-  .badge-base { background: var(--gray-dim); color: var(--muted); }
-  .badge-build { background: var(--blue-dim); color: var(--blue); }
-  .badge-peak { background: var(--orange-dim); color: var(--orange); }
-  .badge-taper { background: var(--green-dim); color: var(--green); }
-  .week-info { flex: 1; min-width: 0; }
-  .week-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .week-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
-  .week-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
-  .week-km { font-size: 13px; font-weight: 700; color: var(--text); }
-  .week-check-count { font-size: 10px; color: var(--muted); }
-  .week-chevron { font-size: 15px; color: var(--muted); flex-shrink: 0; transition: transform 0.2s; }
-  .week-chevron.open { transform: rotate(180deg); }
-
-  /* Days grid */
-  .week-days { display: none; padding: 0 12px 12px; }
-  .week-days.open { display: block; }
-  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-  .day-cell { border-radius: 10px; padding: 7px 3px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
-  .day-cell.clickable:active { transform: scale(0.94); }
-  .day-name-label { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
-  .day-icon { font-size: 17px; margin-bottom: 2px; display: block; }
-  .day-type-label { font-size: 8px; font-weight: 600; line-height: 1.2; }
-  .day-dist { font-size: 8px; color: var(--muted); margin-top: 1px; }
-  .day-rest { background: var(--gray-dim); } .day-rest .day-type-label { color: var(--muted); }
-  .day-run { background: var(--blue-dim); } .day-run .day-type-label { color: var(--blue); }
-  .day-long { background: var(--orange-dim); } .day-long .day-type-label { color: var(--orange); }
-  .day-strength { background: var(--green-dim); } .day-strength .day-type-label { color: var(--green); }
-  .day-race { background: rgba(232,255,71,0.1); } .day-race .day-type-label { color: var(--accent); }
-  .day-vibes { background: var(--purple-dim); } .day-vibes .day-type-label { color: var(--purple); }
-  .day-cell.done::after { content: '✓'; position: absolute; top: 2px; right: 3px; font-size: 8px; font-weight: 800; color: var(--green); }
-  .day-cell.done .day-icon { opacity: 0.4; }
-  .week-note { margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.5; background: rgba(255,255,255,0.04); border-radius: 8px; padding: 8px 10px; }
-
-  /* Overlay */
-  .overlay { display: none; position: fixed; inset: 0; z-index: 100; }
-  .overlay.open { display: flex; align-items: flex-end; }
-  .overlay-bg { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
-  .overlay-sheet { position: relative; z-index: 1; background: var(--bg2); border-radius: 24px 24px 0 0; padding: 20px 20px calc(20px + var(--safe-bottom)); width: 100%; max-height: 85vh; overflow-y: auto; }
-  .overlay-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
-  .overlay-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-  .overlay-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-  .overlay-detail { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 14px; }
-  .overlay-actions { display: flex; gap: 10px; }
-  .btn-done { flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; background: var(--green); color: #0f0f0f; }
-  .btn-undone { flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; border: 1px solid var(--border); cursor: pointer; background: transparent; color: var(--muted); }
-  .btn-skip { flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; background: var(--orange-dim); color: var(--orange); }
-  .vibes-quote { background: var(--purple-dim); border: 1px solid rgba(192,132,252,0.2); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-  .vibes-quote-text { font-size: 14px; color: var(--purple); line-height: 1.5; font-style: italic; margin-bottom: 5px; }
-  .vibes-quote-attr { font-size: 11px; color: var(--muted); }
-  .vibes-label { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--purple); font-weight: 600; background: var(--purple-dim); padding: 3px 8px; border-radius: 6px; margin-bottom: 10px; }
-  .empty-msg { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;--border:rgba(255,255,255,0.08);--text:#f0f0f0;--muted:#888;--accent:#E8FF47;--accent-dim:rgba(232,255,71,0.12);--blue:#4A9EFF;--blue-dim:rgba(74,158,255,0.12);--orange:#FF7A3D;--orange-dim:rgba(255,122,61,0.12);--green:#4ADE80;--green-dim:rgba(74,222,128,0.1);--purple:#C084FC;--purple-dim:rgba(192,132,252,0.12);--gray-dim:rgba(255,255,255,0.06);--radius:14px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;padding-top:var(--safe-top)}
+.header{padding:14px 20px 10px;flex-shrink:0}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-photo{width:52px;height:52px;border-radius:14px;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.header-text{display:flex;flex-direction:column}
+.header-title{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.header-race{font-size:20px;font-weight:700;color:var(--text);line-height:1.1}
+.header-date{font-size:12px;color:var(--muted);margin-top:1px}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+.countdown-pill{background:var(--accent);color:#0f0f0f;font-size:12px;font-weight:700;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.toggles-row{display:flex;gap:8px;padding:0 20px 10px;flex-shrink:0;align-items:center}
+.toggle-group{display:flex;background:var(--bg3);border-radius:20px;padding:3px;border:1px solid var(--border)}
+.toggle-btn{padding:4px 11px;border-radius:16px;font-size:11px;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all .18s;white-space:nowrap;touch-action:manipulation}
+.toggle-btn.active{background:var(--text);color:var(--bg)}
+.mode-label{font-size:10px;color:var(--muted);flex:1;text-align:right}
+.progress-section{padding:0 20px 10px;flex-shrink:0}
+.progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.progress-bar-bg{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 20px 10px;flex-shrink:0}
+.stat-card{background:var(--bg2);border-radius:12px;padding:9px 12px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.stat-val{font-size:17px;font-weight:700;color:var(--text)}
+.stat-sub{font-size:10px;color:var(--muted)}
+.phase-nav{display:flex;gap:6px;padding:0 20px 8px;overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.phase-nav::-webkit-scrollbar{display:none}
+.phase-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.phase-btn.active{background:var(--accent);color:#0f0f0f;border-color:transparent}
+.week-list{flex:1;overflow-y:auto;padding:0 20px;padding-bottom:calc(20px + var(--safe-bottom));scrollbar-width:none}
+.week-list::-webkit-scrollbar{display:none}
+.week-card{background:var(--bg2);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;border:1px solid var(--border)}
+.week-card.current-week{border-color:var(--accent)}
+.week-card.completed-week{opacity:.6}
+.week-header{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none;touch-action:manipulation}
+.week-num-badge{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.badge-base{background:var(--gray-dim);color:var(--muted)}
+.badge-build{background:var(--blue-dim);color:var(--blue)}
+.badge-peak{background:var(--orange-dim);color:var(--orange)}
+.badge-taper{background:var(--green-dim);color:var(--green)}
+.week-info{flex:1;min-width:0}
+.week-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.week-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.week-km{font-size:13px;font-weight:700;color:var(--text)}
+.week-check-count{font-size:10px;color:var(--muted)}
+.week-chevron{font-size:15px;color:var(--muted);flex-shrink:0;transition:transform .2s}
+.week-chevron.open{transform:rotate(180deg)}
+.week-days{display:none;padding:0 12px 12px}
+.week-days.open{display:block}
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.day-cell{border-radius:10px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .15s;position:relative;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.day-cell.clickable:active{transform:scale(.94)}
+.day-name-label{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.day-icon{font-size:17px;margin-bottom:2px;display:block}
+.day-type-label{font-size:8px;font-weight:600;line-height:1.2}
+.day-dist{font-size:8px;color:var(--muted);margin-top:1px}
+.day-rest{background:var(--gray-dim)}.day-rest .day-type-label{color:var(--muted)}
+.day-run{background:var(--blue-dim)}.day-run .day-type-label{color:var(--blue)}
+.day-long{background:var(--orange-dim)}.day-long .day-type-label{color:var(--orange)}
+.day-strength{background:var(--green-dim)}.day-strength .day-type-label{color:var(--green)}
+.day-race{background:rgba(232,255,71,0.1)}.day-race .day-type-label{color:var(--accent)}
+.day-vibes{background:var(--purple-dim)}.day-vibes .day-type-label{color:var(--purple)}
+.day-cell.done::after{content:'✓';position:absolute;top:2px;right:3px;font-size:9px;font-weight:800;color:var(--green)}
+.day-cell.done .day-icon{opacity:.4}
+.week-note{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.5;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px}
+.overlay{display:none;position:fixed;inset:0;z-index:100}
+.overlay.open{display:flex;align-items:flex-end}
+.overlay-bg{position:absolute;inset:0;background:rgba(0,0,0,0.7)}
+.overlay-sheet{position:relative;z-index:1;background:var(--bg2);border-radius:24px 24px 0 0;padding:20px 20px calc(20px + var(--safe-bottom));width:100%;max-height:85vh;overflow-y:auto}
+.overlay-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.overlay-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.overlay-sub{font-size:13px;color:var(--muted);margin-bottom:12px}
+.overlay-detail{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:14px}
+.overlay-actions{display:flex;gap:10px}
+.btn-done{flex:1;padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--green);color:#0f0f0f;touch-action:manipulation}
+.btn-skip{flex:1;padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;background:var(--orange-dim);color:var(--orange);touch-action:manipulation}
+.btn-undo{flex:1;padding:14px;border-radius:12px;font-size:15px;font-weight:700;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);touch-action:manipulation}
+.vibes-card{background:var(--purple-dim);border:1px solid rgba(192,132,252,0.2);border-radius:12px;padding:12px;margin-bottom:12px}
+.vibes-card-label{font-size:11px;color:var(--purple);font-weight:600;margin-bottom:6px}
+.vibes-card-quote{font-size:14px;color:var(--purple);line-height:1.5;font-style:italic;margin-bottom:4px}
+.vibes-card-attr{font-size:11px;color:var(--muted)}
+.empty-msg{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
 </style>
 </head>
 <body>
@@ -134,13 +106,13 @@
       <div class="header-left">
         <img class="header-photo" src="photo.png" alt="Marathon crew">
         <div class="header-text">
-          <div class="header-title">Training plan</div>
+          <div class="header-title">Training Plan</div>
           <div class="header-race">Toronto Waterfront</div>
-          <div class="header-date" id="header-date">Oct 18, 2026 · 42.2 km</div>
+          <div class="header-date" id="header-date">Oct 18, 2026 &middot; 42.2 km</div>
         </div>
       </div>
       <div class="header-right">
-        <div class="countdown-pill" id="countdown">—</div>
+        <div class="countdown-pill" id="countdown">Loading...</div>
       </div>
     </div>
   </div>
@@ -151,10 +123,10 @@
       <button class="toggle-btn" id="btn-mi" onclick="setUnit('mi')">MI</button>
     </div>
     <div class="toggle-group">
-      <button class="toggle-btn active" id="btn-2s" onclick="setMode('2s4r')">2S·4R</button>
-      <button class="toggle-btn" id="btn-3s" onclick="setMode('3s3r')">3S·3R</button>
+      <button class="toggle-btn active" id="btn-2s" onclick="setMode('2s4r')">2S&middot;4R</button>
+      <button class="toggle-btn" id="btn-3s" onclick="setMode('3s3r')">3S&middot;3R</button>
     </div>
-    <div style="flex:1;align-self:center;text-align:right;font-size:10px;color:var(--muted);padding-right:2px;" id="mode-label">2 strength · 4 runs</div>
+    <div class="mode-label" id="mode-label">2 strength &middot; 4 runs</div>
   </div>
 
   <div class="progress-section">
@@ -168,17 +140,17 @@
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">Week</div>
-      <div class="stat-val" id="stat-week">—</div>
+      <div class="stat-val" id="stat-week">1</div>
       <div class="stat-sub">of 18</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">This week</div>
-      <div class="stat-val" id="stat-thisweek">—</div>
+      <div class="stat-val" id="stat-thisweek">-</div>
       <div class="stat-sub" id="stat-thisweek-sub">planned</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Long run</div>
-      <div class="stat-val" id="stat-long">—</div>
+      <div class="stat-val" id="stat-long">-</div>
       <div class="stat-sub" id="stat-long-sub">Saturday</div>
     </div>
   </div>
@@ -195,7 +167,7 @@
 </div>
 
 <div class="overlay" id="overlay">
-  <div class="overlay-bg" onclick="closeOverlay()"></div>
+  <div class="overlay-bg" id="overlay-bg"></div>
   <div class="overlay-sheet">
     <div class="overlay-handle"></div>
     <div class="overlay-title" id="ov-title"></div>
@@ -207,415 +179,409 @@
 </div>
 
 <script>
-const RACE_DATE = new Date('2026-10-18T06:30:00');
-const START_DATE = new Date('2026-06-15');
-const KM_TO_MI = 0.621371;
-let unit = 'km';
-let mode = '2s4r'; // '2s4r' or '3s3r'
+var RACE_DATE = new Date('2026-10-18T06:30:00');
+var START_DATE = new Date('2026-06-15');
+var unit = 'km';
+var mode = '2s4r';
+var state = {};
+var currentFilter = 'all';
+var openWeeks = {};
+var overlayTarget = null;
 
-function fmt(km) { return unit === 'mi' ? (km * KM_TO_MI).toFixed(1) : km; }
-function unitLabel() { return unit === 'mi' ? 'mi' : 'km'; }
+function fmt(km) {
+  if (unit === 'mi') return (km * 0.621371).toFixed(1);
+  return String(km);
+}
+function ul() { return unit === 'mi' ? 'mi' : 'km'; }
+
+var BOB = [
+  {q:"Every little thing is gonna be alright.",s:"Three Little Birds"},
+  {q:"Open your eyes, look within. Are you satisfied with the life you're living?",s:"Exodus"},
+  {q:"You never know how strong you are until being strong is your only choice.",s:"Bob Marley"},
+  {q:"One good thing about music, when it hits you, you feel no pain.",s:"Trenchtown Rock"},
+  {q:"Emancipate yourselves from mental slavery; none but ourselves can free our minds.",s:"Redemption Song"},
+  {q:"The truth is, everyone is going to hurt you. You just got to find the ones worth suffering for.",s:"Bob Marley"},
+  {q:"Live for yourself and you will live in vain; live for others, and you will live again.",s:"Pass It On"},
+  {q:"In this bright future you can't forget your past.",s:"No Woman No Cry"},
+  {q:"Get up, stand up, stand up for your rights.",s:"Get Up Stand Up"},
+  {q:"Some people feel the rain. Others just get wet.",s:"Bob Marley"},
+  {q:"Life is one big road with lots of signs. Don't complicate your mind.",s:"Wake Up and Live"},
+  {q:"Love the life you live. Live the life you love.",s:"Bob Marley"},
+  {q:"Every man gotta right to decide his own destiny.",s:"Zimbabwe"},
+  {q:"None but ourselves can free our minds.",s:"Redemption Song"},
+  {q:"Don't worry about a thing, every little thing gonna be all right.",s:"Three Little Birds"},
+  {q:"The greatness of a man is in his integrity and his ability to affect those around him positively.",s:"Bob Marley"},
+  {q:"Judge not, before you judge yourself.",s:"Judge Not"},
+  {q:"Wake up and live!",s:"Wake Up and Live"}
+];
+
+var WEEKS = [
+  {n:1,phase:'base',label:'Base conditioning',dates:'Jun 15-21',long:12,r1:6,r2:7,vkm:6,t2:32,t3:30,
+   s1:'Full body - squats, deadlifts, core',s2:'Upper body + hip stability',s3:'Legs - lunges, glutes',
+   vd:'6 km easy - no pace goals, just enjoy the movement',
+   ld:'12 km - easy, conversational the whole way',
+   note:'Re-establishing your aerobic base. Keep all runs at an easy conversational pace - you should be able to speak in full sentences.'},
+  {n:2,phase:'base',label:'Aerobic base',dates:'Jun 22-28',long:14,r1:6,r2:7,vkm:7,t2:36,t3:34,
+   s1:'Legs - lunges, step-ups, core',s2:'Upper body + glutes',s3:'Hip flexors + posterior chain',
+   vd:'7 km easy - put on your favourite playlist and just run',
+   ld:'14 km - easy',
+   note:'Introduce your first gentle tempo feeling mid-week. Strength sessions should leave you tired but not wrecked.'},
+  {n:3,phase:'base',label:'Building rhythm',dates:'Jun 29-Jul 5',long:16,r1:7,r2:8,vkm:7,t2:40,t3:38,
+   s1:'Full body circuit',s2:'Hip and glute focus',s3:'Core + mobility',
+   vd:'7 km - explore a new route, no watch-watching allowed',
+   ld:'16 km - easy, refuel at 8 km mark',
+   note:'Start practicing mid-run nutrition. Aim for 30-60g carbs per hour after the first hour. Try gels, chews, or dates.'},
+  {n:4,phase:'base',label:'Recovery week',dates:'Jul 6-12',long:13,r1:5,r2:6,vkm:6,t2:30,t3:28,
+   s1:'Light maintenance - reduce load 30%',s2:'Gentle yoga or mobility',s3:'Bodyweight only',
+   vd:'6 km - recovery vibes, slower than you think you need to go',
+   ld:'13 km - easy',
+   note:'Planned recovery week - reduce volume by 25%. This is where adaptation actually happens. Do not skip it.'},
+  {n:5,phase:'base',label:'Strength of base',dates:'Jul 13-19',long:18,r1:8,r2:9,vkm:9,t2:44,t3:42,
+   s1:'Posterior chain focus',s2:'Core + stability',s3:'Legs - heavier squats',
+   vd:'9 km - run somewhere beautiful, earn the view',
+   ld:'18 km - easy, nutrition every 45 min',
+   note:"You're now back to your pre-gap fitness. From here every week adds genuine new capacity."},
+  {n:6,phase:'build',label:'Build begins',dates:'Jul 20-26',long:20,r1:8,r2:9,vkm:8,t2:48,t3:46,
+   s1:'Full body - heavier squats, RDLs',s2:'Upper + hip flexors',s3:'Single-leg work + core',
+   vd:'8 km - run with a friend or podcast, no pace goals',
+   ld:'20 km - first 20! Easy all the way',
+   note:'Your first 20 km long run is a milestone. One quality session per week - keep everything else easy.'},
+  {n:7,phase:'build',label:'Building aerobic engine',dates:'Jul 27-Aug 2',long:22,r1:9,r2:10,vkm:10,t2:52,t3:50,
+   s1:'Legs + core',s2:'Glutes + upper body',s3:'Hip stability + deadlifts',
+   vd:'10 km - sunset run, no structure, just miles',
+   ld:'22 km - easy',
+   note:'Heat may be a factor in late July Toronto. Run early mornings or evenings. Slow 15-20 sec/km in humidity.'},
+  {n:8,phase:'build',label:'Recovery week',dates:'Aug 3-9',long:17,r1:6,r2:8,vkm:8,t2:38,t3:36,
+   s1:'Light maintenance',s2:'Bodyweight only',s3:'Core + mobility',
+   vd:'8 km - recovery vibes, feel the body bouncing back',
+   ld:'17 km - easy',
+   note:"Second recovery week. You should feel like you could do more - that's the point."},
+  {n:9,phase:'build',label:'Pushing further',dates:'Aug 10-16',long:25,r1:9,r2:10,vkm:10,t2:57,t3:55,
+   s1:'Full body strength',s2:'Hip and core stability',s3:'Legs - volume focus',
+   vd:'10 km - run somewhere new in the city, explore mode on',
+   ld:'25 km - easy',
+   note:"25 km is genuinely long. Your long run pace should feel almost boring. That's correct."},
+  {n:10,phase:'build',label:'Race-pace practice',dates:'Aug 17-23',long:27,r1:10,r2:11,vkm:11,t2:60,t3:58,
+   s1:'Legs focus',s2:'Upper + core',s3:'Glutes + hamstrings',
+   vd:'11 km - run to a favourite spot, take a moment, run back',
+   ld:'27 km - last 5 km at marathon goal pace',
+   note:'The fast-finish long run is your most important workout. Running fast on tired legs is the key race-day skill.'},
+  {n:11,phase:'build',label:'Consistency block',dates:'Aug 24-30',long:29,r1:10,r2:10,vkm:10,t2:63,t3:61,
+   s1:'Full body - maintain intensity',s2:'Glutes + core',s3:'Upper + posterior chain',
+   vd:'10 km - leave your phone at home, just you and the road',
+   ld:'29 km - easy',
+   note:'Prioritize sleep (8+ hrs) and protein (1.6-2g/kg bodyweight). Recovery is where the gains are made.'},
+  {n:12,phase:'build',label:'Recovery week',dates:'Aug 31-Sep 6',long:21,r1:7,r2:9,vkm:9,t2:45,t3:43,
+   s1:'Light maintenance',s2:'Core only',s3:'Bodyweight + mobility',
+   vd:"9 km - slow and grateful, you're deep into a marathon build",
+   ld:'21 km - easy',
+   note:"Third recovery week. Keep strength going - maintain the muscular base you've built."},
+  {n:13,phase:'peak',label:'Peak block begins',dates:'Sep 7-13',long:31,r1:10,r2:12,vkm:12,t2:67,t3:65,
+   s1:'Reduced - maintenance only',s2:'Core + hip stability',s3:'Light legs + core',
+   vd:'12 km - autumn in Toronto, embrace the season change',
+   ld:'31 km - treat it like a mini-race with race-day nutrition',
+   note:'Treat the 31 km run like a mini-race: lay out your gear, use race-day nutrition, start at goal pace.'},
+  {n:14,phase:'peak',label:'Peak fitness',dates:'Sep 14-20',long:33,r1:10,r2:10,vkm:10,t2:69,t3:67,
+   s1:'Maintenance - light',s2:'Core only',s3:'Hip stability',
+   vd:'10 km - a gift to yourself mid-peak, run free',
+   ld:'33 km - last 8 at marathon pace',
+   note:'Peak training stress this week. Everything from here brings you to the start line fresh. Trust your training.'},
+  {n:15,phase:'peak',label:'Final peak effort',dates:'Sep 21-27',long:36,r1:10,r2:8,vkm:8,t2:70,t3:68,
+   s1:'Light - bodyweight only',s2:'Core only',s3:'Mobility + core',
+   vd:'8 km - one last free run before the taper, savour every step',
+   ld:'36 km - longest run of the entire cycle',
+   note:"36 km is your longest run. After this, the hay is in the barn. Taper madness is coming."},
+  {n:16,phase:'taper',label:'Taper begins',dates:'Sep 28-Oct 4',long:26,r1:8,r2:8,vkm:8,t2:52,t3:50,
+   s1:'Light - stop heavy lifting now',s2:'Bodyweight only',s3:'Core + mobility',
+   vd:"8 km - taper vibes, legs feel weird, that's completely okay",
+   ld:'26 km - easy and controlled',
+   note:'Volume drops 25% but intensity stays. Less mileage, same pace. Legs heavy early, great by the weekend.'},
+  {n:17,phase:'taper',label:'Sharpening',dates:'Oct 5-11',long:19,r1:6,r2:6,vkm:6,t2:38,t3:36,
+   s1:'Bodyweight only - last session',s2:'Core only',s3:'Light mobility',
+   vd:'6 km - final vibes run, feel how fit you have become',
+   ld:'19 km - easy, finish feeling fresh',
+   note:'Last substantial training week. No extra mileage. Hydrate well. Expo is Saturday Oct 17.'},
+  {n:18,phase:'taper',label:'Race week',dates:'Oct 12-18',long:42,r1:5,r2:4,vkm:4,t2:15,t3:13,
+   s1:'Rest',s2:'Rest',s3:'Rest',
+   vd:'4 km easy + 4 strides - final vibes run before race day',
+   ld:'TCS Toronto Waterfront Marathon - Race day! 42.2 km',
+   note:'Wake up 3 hrs before the gun. Eat your usual breakfast. Start 10-15 sec/km slower than goal pace for the first 10 km. You got this.'}
+];
+
+var DNAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var DTYPES = {
+  rest:     {label:'Rest',     cls:'day-rest',     icon:'😴'},
+  run:      {label:'Easy Run', cls:'day-run',      icon:'🏃'},
+  vibes:    {label:'Vibes Run',cls:'day-vibes',    icon:'🎵'},
+  strength: {label:'Strength', cls:'day-strength', icon:'💪'},
+  long:     {label:'Long Run', cls:'day-long',     icon:'🏅'},
+  race:     {label:'Race Day', cls:'day-race',     icon:'🏁'}
+};
+
+function getDays(w) {
+  if (w.n === 18) {
+    return [
+      {t:'rest', detail:'Full rest'},
+      {t:'run',  km:5,   detail:'4-5 km very easy - shake out the legs'},
+      {t:'rest', detail:'Full rest'},
+      {t:'vibes',km:4,   detail:w.vd},
+      {t:'rest', detail:'Carb load, hydrate, gear check'},
+      {t:'race', km:42,  detail:w.ld},
+      {t:'rest', detail:'You just ran a marathon. Rest and celebrate!'}
+    ];
+  }
+  var sunKm = Math.max(4, Math.round(w.r1 * 0.6));
+  if (mode === '2s4r') {
+    return [
+      {t:'rest',     detail:'Full rest - recharge'},
+      {t:'run',      km:w.r1, detail:w.r1 + ' km easy pace - conversational'},
+      {t:'strength', detail:w.s1},
+      {t:'vibes',    km:w.vkm, detail:w.vd},
+      {t:'run',      km:w.r2, detail:w.r2 + ' km easy - keep it relaxed'},
+      {t:'long',     km:w.long, detail:w.ld},
+      {t:'run',      km:sunKm, detail:sunKm + ' km easy - optional recovery run, go by feel'}
+    ];
+  } else {
+    return [
+      {t:'rest',     detail:'Full rest - recharge'},
+      {t:'run',      km:w.r1, detail:w.r1 + ' km easy pace - conversational'},
+      {t:'strength', detail:w.s1},
+      {t:'strength', detail:w.s3 || w.s2},
+      {t:'vibes',    km:w.vkm, detail:w.vd},
+      {t:'long',     km:w.long, detail:w.ld},
+      {t:'strength', detail:w.s2 + ' - optional third session, go lighter'}
+    ];
+  }
+}
+
+function sk(wn, di) { return 'w' + wn + '_d' + di; }
+function isDone(wn, di) { return state[sk(wn,di)] === 'done'; }
+function isSkip(wn, di) { return state[sk(wn,di)] === 'skip'; }
+function setDay(wn, di, val) {
+  if (val === null) delete state[sk(wn,di)];
+  else state[sk(wn,di)] = val;
+  try { localStorage.setItem('mstate', JSON.stringify(state)); } catch(e){}
+}
+
+function loadState() {
+  try {
+    var s = localStorage.getItem('mstate');
+    if (s) state = JSON.parse(s);
+    var u = localStorage.getItem('munit'); if (u) unit = u;
+    var m = localStorage.getItem('mmode'); if (m) mode = m;
+  } catch(e) {}
+}
+
+function currentWeek() {
+  var diff = new Date() - START_DATE;
+  var w = Math.floor(diff / (7*24*3600*1000)) + 1;
+  return Math.max(1, Math.min(18, w));
+}
+
+function weekStats(w) {
+  var days = getDays(w);
+  var total = 0, done = 0;
+  for (var i = 0; i < days.length; i++) {
+    if (days[i].t !== 'rest') {
+      total++;
+      if (isDone(w.n, i)) done++;
+    }
+  }
+  return {total:total, done:done};
+}
+
+function updateCountdown() {
+  var diff = RACE_DATE - new Date();
+  var el = document.getElementById('countdown');
+  if (!el) return;
+  if (diff <= 0) { el.textContent = 'Race day!'; return; }
+  el.textContent = Math.ceil(diff / (1000*3600*24)) + ' days';
+}
+
+function updateStats() {
+  var total = 0, done = 0;
+  for (var i = 0; i < WEEKS.length; i++) {
+    var ws = weekStats(WEEKS[i]);
+    total += ws.total; done += ws.done;
+  }
+  var pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('prog-label').textContent = done + ' of ' + total + ' sessions done';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+  var cw = currentWeek();
+  document.getElementById('stat-week').textContent = cw;
+  var cur = WEEKS[cw-1];
+  if (cur) {
+    var tot = cw===18 ? 15 : (mode==='3s3r' ? cur.t3 : cur.t2);
+    document.getElementById('stat-thisweek').textContent = fmt(tot);
+    document.getElementById('stat-long').textContent = fmt(cw===18?42:cur.long);
+    document.getElementById('stat-long-sub').textContent = ul() + ' Saturday';
+    var ws = weekStats(cur);
+    document.getElementById('stat-thisweek-sub').textContent = ws.done + '/' + ws.total + ' done - ' + ul();
+  }
+}
 
 function setUnit(u) {
   unit = u;
-  localStorage.setItem('marathon_unit', u);
-  document.getElementById('btn-km').classList.toggle('active', u==='km');
-  document.getElementById('btn-mi').classList.toggle('active', u==='mi');
-  document.getElementById('header-date').textContent = 'Oct 18, 2026 · ' + (u==='mi' ? '26.2 mi' : '42.2 km');
-  updateStats(); renderWeeks();
+  try { localStorage.setItem('munit', u); } catch(e) {}
+  document.getElementById('btn-km').className = 'toggle-btn' + (u==='km'?' active':'');
+  document.getElementById('btn-mi').className = 'toggle-btn' + (u==='mi'?' active':'');
+  document.getElementById('header-date').textContent = 'Oct 18, 2026 - ' + (u==='mi'?'26.2 mi':'42.2 km');
+  updateStats();
+  renderWeeks();
 }
 
 function setMode(m) {
   mode = m;
-  localStorage.setItem('marathon_mode', m);
-  document.getElementById('btn-2s').classList.toggle('active', m==='2s4r');
-  document.getElementById('btn-3s').classList.toggle('active', m==='3s3r');
-  document.getElementById('mode-label').textContent = m==='3s3r' ? '3 strength · 3 runs' : '2 strength · 4 runs';
-  updateStats(); renderWeeks();
+  try { localStorage.setItem('mmode', m); } catch(e) {}
+  document.getElementById('btn-2s').className = 'toggle-btn' + (m==='2s4r'?' active':'');
+  document.getElementById('btn-3s').className = 'toggle-btn' + (m==='3s3r'?' active':'');
+  document.getElementById('mode-label').textContent = m==='3s3r' ? '3 strength - 3 runs' : '2 strength - 4 runs';
+  updateStats();
+  renderWeeks();
 }
 
-const BOB_QUOTES = [
-  {quote:"Every little thing is gonna be alright.",song:"Three Little Birds"},
-  {quote:"Open your eyes, look within. Are you satisfied with the life you're living?",song:"Exodus"},
-  {quote:"You never know how strong you are until being strong is your only choice.",song:"— Bob Marley"},
-  {quote:"One good thing about music, when it hits you, you feel no pain.",song:"Trenchtown Rock"},
-  {quote:"Emancipate yourselves from mental slavery; none but ourselves can free our minds.",song:"Redemption Song"},
-  {quote:"The truth is, everyone is going to hurt you. You just got to find the ones worth suffering for.",song:"— Bob Marley"},
-  {quote:"Live for yourself and you will live in vain; live for others, and you will live again.",song:"Pass It On"},
-  {quote:"In this bright future you can't forget your past.",song:"No Woman No Cry"},
-  {quote:"Get up, stand up, stand up for your rights.",song:"Get Up Stand Up"},
-  {quote:"Some people feel the rain. Others just get wet.",song:"— Bob Marley"},
-  {quote:"Life is one big road with lots of signs. So when you riding through the ruts, don't complicate your mind.",song:"Wake Up and Live"},
-  {quote:"Love the life you live. Live the life you love.",song:"— Bob Marley"},
-  {quote:"Every man gotta right to decide his own destiny.",song:"Zimbabwe"},
-  {quote:"None but ourselves can free our minds.",song:"Redemption Song"},
-  {quote:"Don't worry about a thing, 'cause every little thing gonna be all right.",song:"Three Little Birds"},
-  {quote:"The greatness of a man is not in how much wealth he acquires, but in his integrity.",song:"— Bob Marley"},
-  {quote:"Judge not, before you judge yourself.",song:"Judge Not"},
-  {quote:"Wake up and live!",song:"Wake Up and Live"},
-];
-function vibeQuote(n) { return BOB_QUOTES[(n-1) % BOB_QUOTES.length]; }
-
-const DAY_ICONS = {rest:'😴',run:'🏃',long:'🏅',strength:'💪',race:'🏁',vibes:'🎵'};
-const DAY_DETAILS = {
-  rest:     {label:'Rest',      cls:'day-rest'},
-  run:      {label:'Easy Run',  cls:'day-run'},
-  long:     {label:'Long Run',  cls:'day-long'},
-  strength: {label:'Strength',  cls:'day-strength'},
-  race:     {label:'Race Day',  cls:'day-race'},
-  vibes:    {label:'Vibes Run', cls:'day-vibes'},
-};
-
-// Day layout: 6 days (Mon–Sat). Sun removed (only 1 rest day = Mon).
-// 2S·4R mode: Mon=rest, Tue=run, Wed=strength, Thu=vibes, Fri=run, Sat=long, Sun=run
-// 3S·3R mode: Mon=rest, Tue=run, Wed=strength, Thu=strength, Fri=vibes, Sat=long, Sun=strength
-// Only one rest day per week (Monday). Sunday is the optional extra run or strength session.
-
-const DAY_NAMES_6 = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-// Base week template builder.
-// Each week: 7 entries [Mon..Sun], only Monday is rest.
-// 2s4r: Mon rest, Tue run, Wed strength, Thu vibes, Fri run, Sat long, Sun run (4 runs, 2 strength)
-// 3s3r: Mon rest, Tue run, Wed strength, Thu strength, Fri vibes, Sat long, Sun strength (3 runs, 3 strength)
-
-function buildDays(w, m) {
-  // m = '2s4r' or '3s3r'
-  const v = w.vibesKm, r1 = w.run1Km, r2 = w.run2Km;
-  const sunRunKm = Math.max(4, Math.round(r1 * 0.6));
-  if (m === '2s4r') {
-    // Mon rest | Tue run | Wed strength | Thu vibes | Fri run | Sat long | Sun run
-    return [
-      {type:'rest',     detail:'Full rest — recharge'},
-      {type:'run',      km:r1,      detail: r1 + ' km easy pace — conversational'},
-      {type:'strength',             detail:w.str1},
-      {type:'vibes',    km:v,       detail:w.vibesDetail},
-      {type:'run',      km:r2,      detail: r2 + ' km easy — keep it relaxed'},
-      {type:'long',     km:w.long,  detail:w.longDetail},
-      {type:'run',      km:sunRunKm, detail: sunRunKm + ' km easy — optional recovery run, go by feel'},
-    ];
-  } else {
-    // 3s3r: Mon rest | Tue run | Wed strength | Thu strength | Fri vibes | Sat long | Sun strength
-    return [
-      {type:'rest',     detail:'Full rest — recharge'},
-      {type:'run',      km:r1,      detail: r1 + ' km easy pace — conversational'},
-      {type:'strength',             detail:w.str1},
-      {type:'strength',             detail:w.str3 || w.str2},
-      {type:'vibes',    km:v,       detail:w.vibesDetail},
-      {type:'long',     km:w.long,  detail:w.longDetail},
-      {type:'strength',             detail: w.str2 + ' — optional third session, go lighter'},
-    ];
-  }
-}
-
-// Week definitions (mode-independent core data)
-const weekDefs = [
-  {n:1,  phase:'base',  label:'Base conditioning',   dates:'Jun 15–21', long:12, run1Km:6,  run2Km:7,  vibesKm:6,  total2s:32, total3s:30,
-   str1:'Full body — squats, deadlifts, core', str2:'Upper body + hip stability', str3:'Legs — lunges, glutes',
-   vibesDetail:'6 km easy — no pace goals, just enjoy the movement',
-   longDetail:'12 km — easy, conversational the whole way',
-   notes:'Re-establishing your aerobic base. Keep all runs at an easy, conversational pace — you should be able to speak in full sentences.'},
-  {n:2,  phase:'base',  label:'Aerobic base',         dates:'Jun 22–28', long:14, run1Km:6,  run2Km:7,  vibesKm:7,  total2s:36, total3s:34,
-   str1:'Legs — lunges, step-ups, core', str2:'Upper body + glutes', str3:'Hip flexors + posterior chain',
-   vibesDetail:'7 km easy — put on your favourite playlist and just run',
-   longDetail:'14 km — easy',
-   notes:'Introduce your first gentle tempo feeling mid-week. Strength sessions should leave you tired but not wrecked.'},
-  {n:3,  phase:'base',  label:'Building rhythm',      dates:'Jun 29–Jul 5', long:16, run1Km:7, run2Km:8, vibesKm:7, total2s:40, total3s:38,
-   str1:'Full body circuit', str2:'Hip & glute focus', str3:'Core + mobility',
-   vibesDetail:'7 km — explore a new route, no watch-watching allowed',
-   longDetail:'16 km — easy, refuel at 8 km mark',
-   notes:'Start practicing mid-run nutrition. Aim for 30–60g carbs/hr after the first hour. Try gels, chews, or dates.'},
-  {n:4,  phase:'base',  label:'Recovery week',        dates:'Jul 6–12',  long:13, run1Km:5,  run2Km:6,  vibesKm:6,  total2s:30, total3s:28,
-   str1:'Light maintenance — reduce load 30%', str2:'Full rest or gentle yoga', str3:'Bodyweight only',
-   vibesDetail:'6 km — recovery vibes, slower than you think you need to go',
-   longDetail:'13 km — easy',
-   notes:'Planned recovery week — reduce volume by ~25%. This is where adaptation actually happens.'},
-  {n:5,  phase:'base',  label:'Strength of base',     dates:'Jul 13–19', long:18, run1Km:8,  run2Km:9,  vibesKm:9,  total2s:44, total3s:42,
-   str1:'Posterior chain focus', str2:'Core + stability', str3:'Legs — heavier squats',
-   vibesDetail:'9 km — run somewhere beautiful, earn the view',
-   longDetail:'18 km — easy, nutrition every 45 min',
-   notes:"You're now back to your pre-gap fitness. From here every week adds genuine new capacity."},
-  {n:6,  phase:'build', label:'Build begins',         dates:'Jul 20–26', long:20, run1Km:8,  run2Km:9,  vibesKm:8,  total2s:48, total3s:46,
-   str1:'Full body — heavier squats, RDLs', str2:'Upper + hip flexors', str3:'Single-leg work + core',
-   vibesDetail:'8 km — run with a friend or podcast, no pace goals',
-   longDetail:'20 km — first 20! Easy all the way',
-   notes:'Your first 20 km long run is a milestone. One quality session per week — keep everything else easy.'},
-  {n:7,  phase:'build', label:'Building aerobic engine', dates:'Jul 27–Aug 2', long:22, run1Km:9, run2Km:10, vibesKm:10, total2s:52, total3s:50,
-   str1:'Legs + core', str2:'Glutes + upper body', str3:'Hip stability + deadlifts',
-   vibesDetail:'10 km — sunset run, no structure, just miles',
-   longDetail:'22 km — easy',
-   notes:'Heat may be a factor in late July Toronto. Run early mornings or evenings. Slow 15–20 sec/km in humidity.'},
-  {n:8,  phase:'build', label:'Recovery week',        dates:'Aug 3–9',   long:17, run1Km:6,  run2Km:8,  vibesKm:8,  total2s:38, total3s:36,
-   str1:'Light maintenance', str2:'Bodyweight only', str3:'Core + mobility',
-   vibesDetail:'8 km — recovery vibes, feel the body bouncing back',
-   longDetail:'17 km — easy',
-   notes:"Second recovery week. You should feel like you could do more — that's the point."},
-  {n:9,  phase:'build', label:'Pushing further',      dates:'Aug 10–16', long:25, run1Km:9,  run2Km:10, vibesKm:10, total2s:57, total3s:55,
-   str1:'Full body strength', str2:'Hip & core stability', str3:'Legs — volume focus',
-   vibesDetail:'10 km — run somewhere new in the city, explore mode on',
-   longDetail:'25 km — easy',
-   notes:'25 km is genuinely long. Your long run pace should feel almost boring. That\'s correct.'},
-  {n:10, phase:'build', label:'Race-pace practice',   dates:'Aug 17–23', long:27, run1Km:10, run2Km:11, vibesKm:11, total2s:60, total3s:58,
-   str1:'Legs focus', str2:'Upper + core', str3:'Glutes + hamstrings',
-   vibesDetail:'11 km — run to a favourite spot, take a moment, run back',
-   longDetail:'27 km — last 5 km at marathon goal pace',
-   notes:'The fast-finish long run is your most important workout. Running fast on tired legs is the key race-day skill.'},
-  {n:11, phase:'build', label:'Consistency block',    dates:'Aug 24–30', long:29, run1Km:10, run2Km:10, vibesKm:10, total2s:63, total3s:61,
-   str1:'Full body — maintain intensity', str2:'Glutes + core', str3:'Upper + posterior chain',
-   vibesDetail:'10 km — leave your phone at home, just you and the road',
-   longDetail:'29 km — easy',
-   notes:'Prioritize sleep (8+ hrs) and protein (1.6–2g/kg bodyweight). Recovery is where the gains are made.'},
-  {n:12, phase:'build', label:'Recovery week',        dates:'Aug 31–Sep 6', long:21, run1Km:7, run2Km:9, vibesKm:9, total2s:45, total3s:43,
-   str1:'Light maintenance', str2:'Core only', str3:'Bodyweight + mobility',
-   vibesDetail:"9 km — slow and grateful, you're deep into a marathon build",
-   longDetail:'21 km — easy',
-   notes:'Third recovery week. Keep strength going — maintain the muscular base you\'ve built.'},
-  {n:13, phase:'peak',  label:'Peak block begins',    dates:'Sep 7–13',  long:31, run1Km:10, run2Km:12, vibesKm:12, total2s:67, total3s:65,
-   str1:'Reduced — maintenance only', str2:'Core + hip stability', str3:'Light legs + core',
-   vibesDetail:'12 km — autumn in Toronto, embrace the season change',
-   longDetail:'31 km — treat it like a mini-race with race-day nutrition',
-   notes:'Treat the 31 km run like a mini-race: lay out your gear, use race-day nutrition, start at goal pace.'},
-  {n:14, phase:'peak',  label:'Peak fitness',         dates:'Sep 14–20', long:33, run1Km:10, run2Km:10, vibesKm:10, total2s:69, total3s:67,
-   str1:'Maintenance — light', str2:'Core only', str3:'Hip stability',
-   vibesDetail:'10 km — a gift to yourself mid-peak, run free',
-   longDetail:'33 km — last 8 at marathon pace',
-   notes:'Peak training stress this week. Everything from here brings you to the start line fresh. Trust your training.'},
-  {n:15, phase:'peak',  label:'Final peak effort',    dates:'Sep 21–27', long:36, run1Km:10, run2Km:8,  vibesKm:8,  total2s:70, total3s:68,
-   str1:'Light — bodyweight only', str2:'Core only', str3:'Mobility + core',
-   vibesDetail:"8 km — one last free run before the taper, savour every step",
-   longDetail:'36 km — longest run of the entire cycle',
-   notes:'36 km is your longest run. After this, the hay is in the barn. Taper madness is coming — you\'ve been warned.'},
-  {n:16, phase:'taper', label:'Taper begins',         dates:'Sep 28–Oct 4', long:26, run1Km:8, run2Km:8, vibesKm:8, total2s:52, total3s:50,
-   str1:'Light — stop heavy lifting now', str2:'Bodyweight only', str3:'Core + mobility',
-   vibesDetail:"8 km — taper vibes, legs feel weird, that's completely okay",
-   longDetail:'26 km — easy and controlled',
-   notes:'Volume drops ~25% but intensity stays. Less mileage, same pace. Legs heavy early, great by the weekend.'},
-  {n:17, phase:'taper', label:'Sharpening',           dates:'Oct 5–11',  long:19, run1Km:6,  run2Km:6,  vibesKm:6,  total2s:38, total3s:36,
-   str1:'Bodyweight only — last session', str2:'Core only', str3:'Light mobility',
-   vibesDetail:'6 km — final vibes run, feel how fit you have become',
-   longDetail:'19 km — easy, finish feeling fresh',
-   notes:'Last substantial training week. No extra mileage. Hydrate well. Expo is Saturday Oct 17.'},
-  {n:18, phase:'taper', label:'Race week',            dates:'Oct 12–18', long:42, run1Km:5,  run2Km:4,  vibesKm:4,  total2s:15, total3s:13,
-   str1:'Rest', str2:'Rest', str3:'Rest',
-   vibesDetail:'4 km very easy + 4 strides — final vibes run before race day',
-   longDetail:'TCS Toronto Waterfront Marathon — Race day! 42.2 km 🏁',
-   notes:'Wake up 3 hrs before the gun. Eat your usual breakfast. Start 10–15 sec/km slower than goal pace for the first 10 km.'},
-];
-
-// Build week 18 days specially
-function buildWeek18Days(m) {
-  // Mon rest, Tue easy 5km, Wed rest, Thu vibes 4km, Fri rest, Sat RACE
-  return [
-    {type:'rest',  detail:'Full rest'},
-    {type:'run',   km:5, detail:'4–5 km very easy — shake out the legs'},
-    {type:'rest',  detail:'Full rest'},
-    {type:'vibes', km:4, detail:'4 km easy + 4 strides — final vibes run'},
-    {type:'rest',  detail:'Carb load, hydrate, gear check'},
-    {type:'race',  km:42, detail:'TCS Toronto Waterfront Marathon 🏁'},
-    {type:'rest',  detail:'You just ran a marathon. Rest. Celebrate. 🎉'},
-  ];
-}
-
-const PHASE_BADGE = {base:'badge-base',build:'badge-build',peak:'badge-peak',taper:'badge-taper'};
-let state = {}, currentFilter = 'all', openWeeks = new Set(), overlayTarget = null;
-
-function loadState() {
-  try { state = JSON.parse(localStorage.getItem('marathon_state')||'{}'); } catch(e) { state={}; }
-  unit = localStorage.getItem('marathon_unit')||'km';
-  mode = localStorage.getItem('marathon_mode')||'2s4r';
-}
-function saveState() { localStorage.setItem('marathon_state', JSON.stringify(state)); }
-function stateKey(wn,di) { return 'w'+wn+'_d'+di; }
-function isDone(wn,di) { return state[stateKey(wn,di)]==='done'; }
-function setDayState(wn,di,val) {
-  if (val===null) delete state[stateKey(wn,di)];
-  else state[stateKey(wn,di)] = val;
-  saveState();
-}
-
-function currentWeekNum() {
-  const diff = new Date() - START_DATE;
-  return Math.max(1, Math.min(18, Math.floor(diff/(7*24*3600*1000))+1));
-}
-
-function getDays(w) {
-  if (w.n === 18) return buildWeek18Days(mode);
-  return buildDays(w, mode);
-}
-
-function countStats() {
-  let total=0, done=0;
-  weekDefs.forEach(w => {
-    getDays(w).forEach((d,i) => {
-      if (d.type!=='rest') { total++; if(isDone(w.n,i)) done++; }
-    });
-  });
-  return {total, done};
-}
-function weekDoneCount(w) {
-  let total=0, done=0;
-  getDays(w).forEach((d,i) => {
-    if (d.type!=='rest') { total++; if(isDone(w.n,i)) done++; }
-  });
-  return {total, done};
-}
-
-function updateCountdown() {
-  const diff = RACE_DATE - new Date();
-  if (diff<=0) { document.getElementById('countdown').textContent='Race day!'; return; }
-  document.getElementById('countdown').textContent = Math.ceil(diff/(1000*3600*24))+' days';
-}
-
-function updateStats() {
-  const {total, done} = countStats();
-  const pct = total ? Math.round((done/total)*100) : 0;
-  document.getElementById('prog-label').textContent = done+' of '+total+' sessions done';
-  document.getElementById('prog-pct').textContent = pct+'%';
-  document.getElementById('prog-bar').style.width = pct+'%';
-  const cw = currentWeekNum();
-  document.getElementById('stat-week').textContent = cw;
-  const curWeek = weekDefs.find(w=>w.n===cw);
-  if (curWeek) {
-    const tot = cw===18 ? 15 : (mode==='3s3r' ? curWeek.total3s : curWeek.total2s);
-    document.getElementById('stat-thisweek').textContent = fmt(tot);
-    document.getElementById('stat-long').textContent = fmt(cw===18?42:curWeek.long);
-    document.getElementById('stat-long-sub').textContent = unitLabel()+' Saturday';
-    const dc = weekDoneCount(curWeek);
-    document.getElementById('stat-thisweek-sub').textContent = dc.done+'/'+dc.total+' done · '+unitLabel();
-  }
-}
-
-function renderWeeks() {
-  const cw = currentWeekNum();
-  const list = document.getElementById('weekList');
-  const filtered = currentFilter==='all' ? weekDefs : weekDefs.filter(w => {
-    if (currentFilter==='base') return w.phase==='base';
-    if (currentFilter==='build') return w.phase==='build';
-    return w.phase===currentFilter;
-  });
-  if (!filtered.length) { list.innerHTML='<div class="empty-msg">No weeks in this phase.</div>'; return; }
-
-  list.innerHTML = filtered.map(w => {
-    const days = getDays(w);
-    const dc = weekDoneCount(w);
-    const isCurrent = w.n===cw;
-    const isComplete = dc.done===dc.total && dc.total>0;
-    const badgeCls = PHASE_BADGE[w.phase]||'badge-base';
-    const isOpen = openWeeks.has(w.n);
-    const tot = w.n===18 ? 15 : (mode==='3s3r' ? w.total3s : w.total2s);
-
-    const daysHtml = days.map((d,i) => {
-      const dd = DAY_DETAILS[d.type]||DAY_DETAILS.rest;
-      const done = isDone(w.n,i);
-      const clickable = d.type!=='rest' ? 'clickable' : '';
-      const doneClass = done ? 'done' : '';
-      const icon = DAY_ICONS[d.type]||'😴';
-      const distVal = d.km ? fmt(d.km)+' '+unitLabel() : '';
-      const kmLabel = distVal ? '<div class="day-dist">'+distVal+'</div>' : '';
-      return '<div class="day-cell '+dd.cls+' '+clickable+' '+doneClass+'" onclick="event.stopPropagation();onDayTap('+w.n+','+i+')">'
-        +'<div class="day-name-label">'+DAY_NAMES_6[i]+'</div>'
-        +'<span class="day-icon">'+icon+'</span>'
-        +'<div class="day-type-label">'+dd.label+'</div>'
-        +kmLabel+'</div>';
-    }).join('');
-
-    return '<div class="week-card'+(isCurrent?' current-week':'')+(isComplete?' completed-week':'')+'" id="wcard-'+w.n+'">'
-      +'<div class="week-header" onclick="toggleWeek('+w.n+')">'
-        +'<div class="week-num-badge '+badgeCls+'">'+w.n+'</div>'
-        +'<div class="week-info">'
-          +'<div class="week-name">'+w.label+'</div>'
-          +'<div class="week-sub">'+w.dates+(isCurrent?' <span style="color:var(--accent)">← now</span>':'')+' · '+w.phase+'</div>'
-        +'</div>'
-        +'<div class="week-right">'
-          +'<div class="week-km">'+fmt(tot)+' '+unitLabel()+'</div>'
-          +'<div class="week-check-count">'+dc.done+'/'+dc.total+' done</div>'
-        +'</div>'
-        +'<span class="week-chevron'+(isOpen?' open':'')+'">⌄</span>'
-      +'</div>'
-      +'<div class="week-days'+(isOpen?' open':'')+'" id="wdays-'+w.n+'">'
-        +'<div class="days-grid">'+daysHtml+'</div>'
-        +'<div class="week-note">'+w.notes+'</div>'
-      +'</div></div>';
-  }).join('');
+function setFilter(f, btn) {
+  currentFilter = f;
+  var btns = document.querySelectorAll('.phase-btn');
+  for (var i=0;i<btns.length;i++) btns[i].className='phase-btn';
+  btn.className = 'phase-btn active';
+  renderWeeks();
 }
 
 function toggleWeek(n) {
-  if (openWeeks.has(n)) openWeeks.delete(n); else openWeeks.add(n);
+  openWeeks[n] = !openWeeks[n];
   renderWeeks();
-  if (openWeeks.has(n)) setTimeout(()=>{ const el=document.getElementById('wcard-'+n); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },50);
-}
-
-function setFilter(f,btn) {
-  currentFilter=f;
-  document.querySelectorAll('.phase-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderWeeks();
-}
-
-function onDayTap(weekN, dayIdx) {
-  const w = weekDefs.find(x=>x.n===weekN);
-  const days = getDays(w);
-  const d = days[dayIdx];
-  if (d.type==='rest') return;
-
-  // Tap a completed session to un-mark it instantly (no overlay)
-  if (isDone(weekN, dayIdx)) {
-    setDayState(weekN, dayIdx, null);
-    renderWeeks(); updateStats();
-    return;
+  if (openWeeks[n]) {
+    setTimeout(function() {
+      var el = document.getElementById('wc'+n);
+      if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    }, 50);
   }
+}
 
-  // Open bottom sheet to confirm completion
-  overlayTarget = {weekN, dayIdx};
-  const dd = DAY_DETAILS[d.type];
-  document.getElementById('ov-title').textContent = DAY_NAMES_6[dayIdx] + ' - ' + dd.label;
-  document.getElementById('ov-sub').textContent = 'Week ' + weekN + ' - ' + w.dates + (d.km ? ' - ' + fmt(d.km) + ' ' + unitLabel() : '');
+function tapDay(wn, di) {
+  var w = WEEKS[wn-1];
+  var days = getDays(w);
+  var d = days[di];
+  if (d.t === 'rest') return;
+  overlayTarget = {wn:wn, di:di};
+  var dt = DTYPES[d.t] || DTYPES.rest;
+  document.getElementById('ov-title').textContent = DNAMES[di] + ' - ' + dt.label;
+  document.getElementById('ov-sub').textContent = 'Week ' + wn + ' - ' + w.dates + (d.km ? ' - ' + fmt(d.km) + ' ' + ul() : '');
   document.getElementById('ov-detail').textContent = d.detail;
-  const vibesEl = document.getElementById('ov-vibes');
-  if (d.type === 'vibes') {
-    const q = vibeQuote(weekN);
-    vibesEl.innerHTML = '<div class="vibes-label">Vibes Run Day</div>'
-      + '<div class="vibes-quote"><div class="vibes-quote-text">' + q.quote + '</div>'
-      + '<div class="vibes-quote-attr">Bob Marley - ' + q.song + '</div></div>';
+  var vibesEl = document.getElementById('ov-vibes');
+  if (d.t === 'vibes') {
+    var q = BOB[(wn-1) % BOB.length];
+    vibesEl.innerHTML = '<div class="vibes-card"><div class="vibes-card-label">Vibes Run Day</div><div class="vibes-card-quote">' + q.q + '</div><div class="vibes-card-attr">Bob Marley - ' + q.s + '</div></div>';
   } else {
     vibesEl.innerHTML = '';
   }
-  document.getElementById('ov-actions').innerHTML =
-    '<button class="btn-done" onclick="markDay('done')">Done &#10003;</button>'
-    + '<button class="btn-skip" onclick="markDay('skip')">Skip</button>';
-  document.getElementById('overlay').classList.add('open');
+  var actions = document.getElementById('ov-actions');
+  if (isDone(wn, di)) {
+    actions.innerHTML = '<button class="btn-undo" id="btn-undo">Remove checkmark</button>';
+    document.getElementById('btn-undo').onclick = function() { markDay(null); };
+  } else {
+    actions.innerHTML = '<button class="btn-done" id="btn-done-ov">Done</button><button class="btn-skip" id="btn-skip-ov">Skip</button>';
+    document.getElementById('btn-done-ov').onclick = function() { markDay('done'); };
+    document.getElementById('btn-skip-ov').onclick = function() { markDay('skip'); };
+  }
+  document.getElementById('overlay').className = 'overlay open';
 }
 
 function markDay(val) {
   if (!overlayTarget) return;
-  setDayState(overlayTarget.weekN, overlayTarget.dayIdx, val);
+  setDay(overlayTarget.wn, overlayTarget.di, val);
   closeOverlay();
   renderWeeks();
   updateStats();
 }
 
 function closeOverlay() {
-  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('overlay').className = 'overlay';
   overlayTarget = null;
 }
 
-function init() {
-  loadState();
-  document.getElementById('btn-km').classList.toggle('active', unit==='km');
-  document.getElementById('btn-mi').classList.toggle('active', unit==='mi');
-  document.getElementById('btn-2s').classList.toggle('active', mode==='2s4r');
-  document.getElementById('btn-3s').classList.toggle('active', mode==='3s3r');
-  document.getElementById('header-date').textContent = 'Oct 18, 2026 · '+(unit==='mi'?'26.2 mi':'42.2 km');
-  document.getElementById('mode-label').textContent = mode==='3s3r' ? '3 strength · 3 runs' : '2 strength · 4 runs';
-  updateCountdown();
-  setInterval(updateCountdown, 60000);
-  updateStats();
-  openWeeks.add(currentWeekNum());
-  renderWeeks();
-  setTimeout(()=>{ const el=document.getElementById('wcard-'+currentWeekNum()); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },100);
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+function renderWeeks() {
+  var cw = currentWeek();
+  var list = document.getElementById('weekList');
+  var weeks = currentFilter==='all' ? WEEKS : WEEKS.filter(function(w) {
+    if (currentFilter==='base') return w.phase==='base';
+    if (currentFilter==='build') return w.phase==='build';
+    return w.phase===currentFilter;
+  });
+  if (!weeks.length) { list.innerHTML='<div class="empty-msg">No weeks in this phase.</div>'; return; }
+  var html = '';
+  for (var i=0;i<weeks.length;i++) {
+    var w = weeks[i];
+    var days = getDays(w);
+    var ws = weekStats(w);
+    var isCur = w.n===cw;
+    var isDoneAll = ws.done===ws.total && ws.total>0;
+    var badge = 'badge-'+w.phase;
+    var isOpen = !!openWeeks[w.n];
+    var tot = w.n===18 ? 15 : (mode==='3s3r' ? w.t3 : w.t2);
+    var daysHtml = '';
+    for (var j=0;j<days.length;j++) {
+      var d = days[j];
+      var dt = DTYPES[d.t] || DTYPES.rest;
+      var done = isDone(w.n, j);
+      var skip = isSkip(w.n, j);
+      var cls = dt.cls + (d.t!=='rest'?' clickable':'') + (done?' done':'') + (skip?' skipped':'');
+      var distHtml = d.km ? '<div class="day-dist">'+fmt(d.km)+' '+ul()+'</div>' : '';
+      var doneAfter = done ? '<span style="position:absolute;top:2px;right:3px;font-size:9px;font-weight:800;color:var(--green)">&#10003;</span>' : '';
+      var skipStyle = skip ? 'opacity:0.4;' : '';
+      daysHtml += '<div class="day-cell '+cls+'" style="'+skipStyle+'" onclick="tapDay('+w.n+','+j+')">'
+        + doneAfter
+        + '<div class="day-name-label">'+DNAMES[j]+'</div>'
+        + '<span class="day-icon" style="'+(done?'opacity:.4':'')+'">'+dt.icon+'</span>'
+        + '<div class="day-type-label">'+dt.label+'</div>'
+        + distHtml
+        + '</div>';
+    }
+    html += '<div class="week-card'+(isCur?' current-week':'')+(isDoneAll?' completed-week':'')+'" id="wc'+w.n+'">'
+      + '<div class="week-header" onclick="toggleWeek('+w.n+')">'
+        + '<div class="week-num-badge '+badge+'">'+w.n+'</div>'
+        + '<div class="week-info">'
+          + '<div class="week-name">'+w.label+'</div>'
+          + '<div class="week-sub">'+w.dates+(isCur?' &larr; now':'')+' &middot; '+w.phase+'</div>'
+        + '</div>'
+        + '<div class="week-right">'
+          + '<div class="week-km">'+fmt(tot)+' '+ul()+'</div>'
+          + '<div class="week-check-count">'+ws.done+'/'+ws.total+' done</div>'
+        + '</div>'
+        + '<span class="week-chevron'+(isOpen?' open':'')+'">&#8964;</span>'
+      + '</div>'
+      + '<div class="week-days'+(isOpen?' open':'')+'">'
+        + '<div class="days-grid">'+daysHtml+'</div>'
+        + '<div class="week-note">'+w.note+'</div>'
+      + '</div>'
+      + '</div>';
+  }
+  list.innerHTML = html;
 }
 
-init();
+document.getElementById('overlay-bg').onclick = closeOverlay;
+
+loadState();
+document.getElementById('btn-km').className = 'toggle-btn' + (unit==='km'?' active':'');
+document.getElementById('btn-mi').className = 'toggle-btn' + (unit==='mi'?' active':'');
+document.getElementById('btn-2s').className = 'toggle-btn' + (mode==='2s4r'?' active':'');
+document.getElementById('btn-3s').className = 'toggle-btn' + (mode==='3s3r'?' active':'');
+document.getElementById('header-date').textContent = 'Oct 18, 2026 - ' + (unit==='mi'?'26.2 mi':'42.2 km');
+document.getElementById('mode-label').textContent = mode==='3s3r' ? '3 strength - 3 runs' : '2 strength - 4 runs';
+openWeeks[currentWeek()] = true;
+updateCountdown();
+setInterval(updateCountdown, 60000);
+updateStats();
+renderWeeks();
+setTimeout(function() {
+  var el = document.getElementById('wc'+currentWeek());
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}, 150);
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
+}
 </script>
 </body>
 </html>
